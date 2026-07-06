@@ -12,6 +12,7 @@ import {
   Home as HomeIcon,
   Lightbulb,
   ChevronRight,
+  ChevronDown,
   Check,
   Star,
   Network,
@@ -100,6 +101,12 @@ function NetworkAnimation() {
   );
 }
 
+const INDUSTRIES = [
+  "AV Integrators", "Plumbers", "Electricians", "Real Estate Agents",
+  "House Flippers", "Architects", "Home Builders", "HVAC Contractors",
+  "Restaurant Supply", "Tile & Flooring", "Roofing", "Landscapers", "Other",
+];
+
 /* ── Wordmark ── */
 function Logo({ className = "" }: { className?: string }) {
   return (
@@ -117,7 +124,10 @@ function Logo({ className = "" }: { className?: string }) {
 
 /* ── Main page ── */
 export default function Home() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [industry, setIndustry] = useState("");
   const [company, setCompany] = useState(""); // honeypot — left blank by real users
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -151,14 +161,14 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || submitting) return;
+    if (!name || !email || !phone || !industry || submitting) return;
     setSubmitting(true);
     setError("");
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, company }),
+        body: JSON.stringify({ name, email, phone, industry, company }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -166,7 +176,10 @@ export default function Home() {
         return;
       }
       setSubmitted(true);
+      setName("");
       setEmail("");
+      setPhone("");
+      setIndustry("");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -776,7 +789,7 @@ export default function Home() {
                 </p>
 
                 {!submitted ? (
-                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-xl mx-auto text-left">
                     <input
                       type="text"
                       name="company"
@@ -787,14 +800,48 @@ export default function Home() {
                       className="hidden"
                       aria-hidden="true"
                     />
-                    <input
-                      type="email"
-                      placeholder="Enter your business email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="flex-1 h-12 px-4 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white placeholder:text-[#4a5568] focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm"
-                    />
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        placeholder="Full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        className="h-12 px-4 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white placeholder:text-[#4a5568] focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm"
+                      />
+                      <input
+                        type="email"
+                        placeholder="Business email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="h-12 px-4 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white placeholder:text-[#4a5568] focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm"
+                      />
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <input
+                        type="tel"
+                        placeholder="Phone number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        required
+                        className="h-12 px-4 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white placeholder:text-[#4a5568] focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm"
+                      />
+                      <div className="relative">
+                        <select
+                          value={industry}
+                          onChange={(e) => setIndustry(e.target.value)}
+                          required
+                          className="w-full h-12 pl-4 pr-10 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm appearance-none disabled:opacity-60"
+                        >
+                          <option value="" disabled>Select your industry</option>
+                          {INDUSTRIES.map((ind) => (
+                            <option key={ind} value={ind}>{ind}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-[#8b9bb4] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
                     <button type="submit" disabled={submitting}
                       className="flex items-center justify-center gap-1.5 h-12 px-6 rounded-lg bg-[#00d4aa] hover:bg-[#00b894] text-[#0a1628] font-bold whitespace-nowrap transition-all duration-200 active:scale-[0.97] text-sm disabled:opacity-60 disabled:cursor-not-allowed">
                       {submitting ? "Submitting..." : <>Apply Now <ChevronRight className="w-4 h-4" /></>}
