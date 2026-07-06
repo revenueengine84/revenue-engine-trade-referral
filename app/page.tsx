@@ -104,7 +104,10 @@ function NetworkAnimation() {
 /* ── Main page ── */
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [company, setCompany] = useState(""); // honeypot — left blank by real users
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -114,14 +117,47 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) { setSubmitted(true); setEmail(""); }
+    if (!email || submitting) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, company }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -149,15 +185,19 @@ export default function Home() {
             Apply Now
           </button>
           {/* Mobile hamburger */}
-          <button className="md:hidden p-2 text-[#8b9bb4] hover:text-white" onClick={() => setMenuOpen(!menuOpen)}>
-            <div className="w-5 h-0.5 bg-current mb-1 transition-all" />
-            <div className="w-5 h-0.5 bg-current mb-1" />
-            <div className="w-5 h-0.5 bg-current" />
+          <button
+            className="md:hidden p-2 text-[#8b9bb4] hover:text-white"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}>
+            <div className={`w-5 h-0.5 bg-current mb-1 transition-transform duration-200 ${menuOpen ? "translate-y-1.5 rotate-45" : ""}`} />
+            <div className={`w-5 h-0.5 bg-current mb-1 transition-opacity duration-200 ${menuOpen ? "opacity-0" : ""}`} />
+            <div className={`w-5 h-0.5 bg-current transition-transform duration-200 ${menuOpen ? "-translate-y-1.5 -rotate-45" : ""}`} />
           </button>
         </nav>
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 flex flex-col gap-4">
+          <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 flex flex-col gap-4 shadow-2xl">
             {["how-it-works","vetting","integrations","flippers","pricing"].map(id => (
               <button key={id} onClick={() => scrollTo(id)}
                 className="text-sm text-[#8b9bb4] hover:text-white transition-colors capitalize text-left">
@@ -171,6 +211,15 @@ export default function Home() {
           </div>
         )}
       </header>
+
+      {/* Backdrop scrim for mobile menu */}
+      {menuOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/60"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
@@ -230,7 +279,7 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <span>200+ businesses on the waitlist</span>
+                <span>75+ businesses on the waitlist</span>
               </div>
               <div className="hidden sm:block w-px h-4 bg-[#2a3a5c]" />
               <div className="flex items-center gap-1.5">
@@ -257,9 +306,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-[#2a3a5c]/50 bg-[#1a2744]/50">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                <button className="w-20 h-20 rounded-full bg-[#00d4aa]/20 border-2 border-[#00d4aa]/40 flex items-center justify-center hover:scale-110 transition-transform">
+                <div className="w-20 h-20 rounded-full bg-[#00d4aa]/20 border-2 border-[#00d4aa]/40 flex items-center justify-center">
                   <Play className="w-8 h-8 text-[#00d4aa] ml-1" />
-                </button>
+                </div>
                 <p className="text-[#8b9bb4] text-sm">Video coming soon</p>
               </div>
             </div>
@@ -715,6 +764,16 @@ export default function Home() {
                 {!submitted ? (
                   <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                     <input
+                      type="text"
+                      name="company"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="hidden"
+                      aria-hidden="true"
+                    />
+                    <input
                       type="email"
                       placeholder="Enter your business email"
                       value={email}
@@ -722,9 +781,9 @@ export default function Home() {
                       required
                       className="flex-1 h-12 px-4 rounded-lg bg-[#0a1628] border border-[#2a3a5c] text-white placeholder:text-[#4a5568] focus:outline-none focus:border-[#00d4aa] focus:ring-2 focus:ring-[#00d4aa]/20 text-sm"
                     />
-                    <button type="submit"
-                      className="flex items-center justify-center gap-1.5 h-12 px-6 rounded-lg bg-[#00d4aa] hover:bg-[#00b894] text-[#0a1628] font-bold whitespace-nowrap transition-all duration-200 active:scale-[0.97] text-sm">
-                      Apply Now <ChevronRight className="w-4 h-4" />
+                    <button type="submit" disabled={submitting}
+                      className="flex items-center justify-center gap-1.5 h-12 px-6 rounded-lg bg-[#00d4aa] hover:bg-[#00b894] text-[#0a1628] font-bold whitespace-nowrap transition-all duration-200 active:scale-[0.97] text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                      {submitting ? "Submitting..." : <>Apply Now <ChevronRight className="w-4 h-4" /></>}
                     </button>
                   </form>
                 ) : (
@@ -734,6 +793,10 @@ export default function Home() {
                       Application received! We&apos;ll review and be in touch within 48 hours.
                     </span>
                   </div>
+                )}
+
+                {error && (
+                  <p className="text-sm text-[#ef4444] mt-3" role="alert">{error}</p>
                 )}
 
                 <p className="text-xs text-[#4a5568] mt-4">No spam. No credit card required. Vetted professionals only.</p>
