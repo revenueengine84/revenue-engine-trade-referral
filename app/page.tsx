@@ -199,7 +199,7 @@ export default function Home() {
             <Logo className="text-xl md:text-2xl" />
           </div>
           <div className="hidden md:flex items-center gap-8">
-            {["how-it-works","vetting","integrations","flippers","pricing"].map(id => (
+            {["how-it-works","vetting","integrations","pricing"].map(id => (
               <button key={id} onClick={() => scrollTo(id)}
                 className="text-sm text-[#8b9bb4] hover:text-white transition-colors capitalize">
                 {id.replace(/-/g," ")}
@@ -225,7 +225,7 @@ export default function Home() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/5 px-4 py-4 flex flex-col gap-4 shadow-2xl">
-            {["how-it-works","vetting","integrations","flippers","pricing"].map(id => (
+            {["how-it-works","vetting","integrations","pricing"].map(id => (
               <button key={id} onClick={() => scrollTo(id)}
                 className="text-sm text-[#8b9bb4] hover:text-white transition-colors capitalize text-left">
                 {id.replace(/-/g," ")}
