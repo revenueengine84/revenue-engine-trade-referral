@@ -103,9 +103,14 @@ function NetworkAnimation() {
 /* ── Wordmark ── */
 function Logo({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2 font-display font-extrabold tracking-tight ${className}`}>
-      <ShieldCheck className="w-[1.1em] h-[1.1em] text-[#00d4aa]" />
-      <span className="text-gradient">Vouch</span>
+    <span className={`inline-flex items-center gap-2 ${className}`}>
+      <ShieldCheck className="w-[1.1em] h-[1.1em] text-[#00d4aa] shrink-0" />
+      <span className="flex flex-col leading-none">
+        <span className="font-display font-extrabold tracking-tight text-gradient">Vouch</span>
+        <span className="text-[9px] font-semibold tracking-widest uppercase text-[#8b9bb4] mt-0.5 whitespace-nowrap">
+          by Revenue Engine
+        </span>
+      </span>
     </span>
   );
 }
@@ -827,7 +832,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <div className="text-sm text-[#4a5568]">&copy; 2026 Vouch. All rights reserved.</div>
+            <div className="text-sm text-[#4a5568]">&copy; 2026 Revenue Engine. All rights reserved.</div>
           </div>
         </div>
       </footer>
