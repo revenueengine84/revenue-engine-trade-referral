@@ -6,11 +6,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: "Revenue Engine — Trade Partner Referral Network",
+  title: "Vouch — Trade Partner Referral Network",
   description:
     "The exclusive invite-only referral network where vetted local trade professionals exchange qualified leads and earn referral fees automatically.",
   openGraph: {
-    title: "Revenue Engine — Trade Partner Referral Network",
+    title: "Vouch — Trade Partner Referral Network",
     description:
       "Send a referral. Get paid. That simple. Join the exclusive network for vetted trade professionals.",
     type: "website",

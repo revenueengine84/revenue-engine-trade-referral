@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import {
   ArrowRight,
@@ -101,6 +100,16 @@ function NetworkAnimation() {
   );
 }
 
+/* ── Wordmark ── */
+function Logo({ className = "" }: { className?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-2 font-display font-extrabold tracking-tight ${className}`}>
+      <ShieldCheck className="w-[1.1em] h-[1.1em] text-[#00d4aa]" />
+      <span className="text-gradient">Vouch</span>
+    </span>
+  );
+}
+
 /* ── Main page ── */
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -169,7 +178,7 @@ export default function Home() {
       }`}>
         <nav className="container flex items-center justify-between h-16 md:h-20">
           <div className="flex items-center gap-3">
-            <Image src="/logo-transp.png" alt="Revenue Engine" width={160} height={48} className="h-10 md:h-12 w-auto object-contain" priority />
+            <Logo className="text-xl md:text-2xl" />
           </div>
           <div className="hidden md:flex items-center gap-8">
             {["how-it-works","vetting","integrations","flippers","pricing"].map(id => (
@@ -247,7 +256,7 @@ export default function Home() {
               className="text-lg md:text-xl text-[#8b9bb4] max-w-2xl mx-auto mb-10 leading-relaxed"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}>
-              Revenue Engine is the exclusive referral network where vetted local trades —
+              Vouch is the exclusive referral network where vetted local trades —
               plumbers, electricians, AV integrators, builders, and more — exchange
               qualified leads and earn referral fees automatically.
             </motion.p>
@@ -298,7 +307,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="font-display font-bold text-3xl md:text-4xl mb-4">See how it works in 60 seconds</h2>
             <p className="text-[#8b9bb4] text-lg max-w-2xl mx-auto">
-              Watch how vetted trade partners use Revenue Engine to build profitable referral relationships.
+              Watch how vetted trade partners use Vouch to build profitable referral relationships.
             </p>
           </motion.div>
 
@@ -497,7 +506,7 @@ export default function Home() {
             </span>
             <h2 className="font-display font-bold text-3xl md:text-4xl mb-4">The house flipper&apos;s secret weapon</h2>
             <p className="text-[#8b9bb4] text-lg max-w-2xl mx-auto">
-              Flippers need reliable, licensed, and fairly-priced contractors across a dozen trades for every single project. Revenue Engine becomes their vetted contractor rolodex.
+              Flippers need reliable, licensed, and fairly-priced contractors across a dozen trades for every single project. Vouch becomes their vetted contractor rolodex.
             </p>
           </motion.div>
 
@@ -534,7 +543,7 @@ export default function Home() {
                 <div className="w-10 h-10 rounded-lg bg-[#00d4aa]/10 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-[#00d4aa]" />
                 </div>
-                <h3 className="font-display font-bold text-lg">The Revenue Engine Solution</h3>
+                <h3 className="font-display font-bold text-lg">The Vouch Solution</h3>
               </div>
               <ul className="space-y-4">
                 {[
@@ -810,7 +819,7 @@ export default function Home() {
       <footer className="py-12 border-t border-[#2a3a5c]/30">
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Image src="/logo-transp.png" alt="Revenue Engine" width={140} height={42} className="h-10 w-auto object-contain" />
+            <Logo className="text-xl" />
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#8b9bb4]">
               {["how-it-works","vetting","integrations","flippers","pricing"].map(id => (
                 <button key={id} onClick={() => scrollTo(id)} className="hover:text-white transition-colors capitalize">
@@ -818,7 +827,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <div className="text-sm text-[#4a5568]">&copy; 2026 Revenue Engine. All rights reserved.</div>
+            <div className="text-sm text-[#4a5568]">&copy; 2026 Vouch. All rights reserved.</div>
           </div>
         </div>
       </footer>
